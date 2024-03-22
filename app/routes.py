@@ -1,16 +1,17 @@
 from flask import (
-    Blueprint, render_template, request, jsonify, url_for, redirect
+    Blueprint, render_template, request, jsonify, url_for, redirect, session, flash
 )
+from werkzeug.security import check_password_hash
 import pandas as pd
 import json
 import plotly
 import plotly.express as px
 
-from .models import Participant, Question, Answer
+from .models import Participant, Question, Answer, Admin
 from .database import db
 
 main = Blueprint("main", __name__)
-admin = Blueprint("amdin", __name__, url_prefix="/admin/")
+admin = Blueprint("admin", __name__, url_prefix="/admin")
 
 
 @main.route("/", methods=["GET"])
@@ -31,7 +32,7 @@ def add_participant():
     return jsonify(participant_data)
 
 
-@main.route("/question")
+@main.route("/question", methods=["GET"])
 def question():
     participant_id = request.cookies.get("participant_id")
     if not participant_id:
@@ -39,7 +40,7 @@ def question():
     return render_template("question.html")
 
 
-@main.route("/questions")
+@main.route("/questions", methods=["GET"])
 def get_questions():
     questions = Question.query.order_by(Question.id).all()
     question_list = [
@@ -69,7 +70,7 @@ def submit():
     return jsonify({"msg": "Successfully Created Answer"})
 
 
-@main.route("/results")
+@main.route("/results", methods=["GET"])
 def show_results():
     participants = Participant.query.all()
     participants_data = [
@@ -130,3 +131,50 @@ def show_results():
     )
     return render_template("results.html", graphs_json=graphs_json)
 
+@admin.route("/", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form['username']
+        password = request.form['password']
+
+        admin = Admin.query.filter_by(username=username).first()
+        if admin and check_password_hash(admin.password, password):
+            session["admin_logined"] = True
+            return render_template("dashboard.html")
+        return flash("아이디 비밀번호가 맞지 않습니다.")
+    return render_template("admin.html")
+
+
+@admin.route("/logout", methods=["GET"])
+def logout():
+    session.pop("admin_logined", None)
+    return redirect(url_for("main.home"))
+
+
+from functools import wraps
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "admin_logined" not in session:
+            return redirect(url_for("admin.login"))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+@admin.route("/dashboard", methods=["GET"])
+@login_required
+def dashboard():
+    pass
+
+
+@admin.route("/dashboard/questions", methods=["GET", "POST"])
+@login_required
+def manage_questions():
+    pass
+
+
+@admin.route("/dashboard/question-list", methods=["GET"])
+@login_required
+def question_list():
+    pass

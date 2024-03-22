@@ -7,6 +7,7 @@ migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
+    app.secret_key = "oz_kwak_coding"
 
     basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
     dbfile = os.path.join(basedir, "db.sqlite")
