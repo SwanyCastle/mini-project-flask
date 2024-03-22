@@ -1,10 +1,16 @@
 from flask import (
     Blueprint, render_template, request, jsonify, url_for, redirect
 )
+import pandas as pd
+import json
+import plotly
+import plotly.express as px
+
 from .models import Participant, Question, Answer
 from .database import db
 
 main = Blueprint("main", __name__)
+admin = Blueprint("amdin", __name__, url_prefix="/admin/")
 
 
 @main.route("/", methods=["GET"])
@@ -65,4 +71,62 @@ def submit():
 
 @main.route("/results")
 def show_results():
-    pass
+    participants = Participant.query.all()
+    participants_data = [
+        {
+            "age": participant.age,
+            "gender": participant.gender
+        } for participant in participants
+    ]
+
+    answers = Answer.query.all()
+    answers_data = [
+        {
+            "question_id": answer.question_id,
+            "chosen_answer": answer.chosen_answer
+            # "age": answer.participant.age,
+            # "gender": answer.participant.gender
+        } for answer in answers
+    ]
+
+    participant_df = pd.DataFrame(participants_data)
+    answer_df = pd.DataFrame(answers_data)
+
+    fig_age = px.pie(participant_df, names="age", title="참가자 나이 분포도")
+    fig_gender = px.pie(participant_df, names="gender", title="참가자 성별 분포도")
+
+    question_answer_figs = {}
+
+    for question_id in answer_df['question_id'].unique():
+        filter_question_df = answer_df[answer_df['question_id'] == question_id]
+        fig = px.histogram(
+            filter_question_df,
+            x="chosen_answer",
+            color="chosen_answer",
+            title=f"Question {question_id} Responses",
+            barmode="group"
+        )
+        fig.update_layout(
+            xaxis_title="Chosen Answer",
+            yaxis_title="Count",
+            plot_bgcolor="rgba(0,0,0,0)",
+            paper_bgcolor="rgba(0,0,0,0)",
+            font=dict(family="Courier New, monospace", size=18, color="#7f7f7f"),
+            title_font=dict(
+                family="Helvetica, Arial, sans-serif", size=22, color="RebeccaPurple"
+            ),
+        )
+        fig.update_traces(marker_line_width=1.5, opacity=0.6)
+        question_answer_figs[f"question_{question_id}"] = fig
+
+    graphs_json = json.dumps(
+        {
+            "age_distribution": fig_age,
+            "gender_distribution": fig_gender,
+            "quiz_responses": question_answer_figs
+            # "age_quiz_response_figs": ""
+        },
+        cls=plotly.utils.PlotlyJSONEncoder
+    )
+    return render_template("results.html", graphs_json=graphs_json)
+

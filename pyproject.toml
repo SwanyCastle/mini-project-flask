@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "suervey-project"
+name = "survey-project"
 version = "0.1.0"
 description = ""
 authors = ["SwanyCastle <seunghwan712@gmail.com>"]
@@ -11,6 +11,9 @@ flask = "^3.0.2"
 flask-sqlalchemy = "^3.1.1"
 flask-mysqldb = "^2.0.0"
 flask-migrate = "^4.0.7"
+pandas = "^2.2.1"
+plotly = "^5.20.0"
+gunicorn = "^21.2.0"
 pytz = "^2024.1"
 
 

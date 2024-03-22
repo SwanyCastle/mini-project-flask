@@ -51,7 +51,6 @@
 
         async function initializeQuiz() {
             questions_list = await fetchQuestions();
-            console.log(questions_list);
             userAnswers = Array(questions_list.length).fill(null);
             showQuestion();
         }

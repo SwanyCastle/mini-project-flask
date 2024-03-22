@@ -67,14 +67,14 @@
         });
 
         // 나이대별 응답 데이터에 대한 그래프 동적 생성 및 렌더링
-        Object.keys(graphs_json.age_quiz_response_figs).forEach(function(key) {
-            var ageQuizResponse = graphs_json.age_quiz_response_figs[key];
-            var div = document.createElement('div');
-            div.id = key + "-age";
-            div.className = 'graph-container';
-            document.getElementById('age-quiz-responses-container').appendChild(div);
-            Plotly.newPlot(div.id, ageQuizResponse.data, ageQuizResponse.layout);
-});
+//         Object.keys(graphs_json.age_quiz_response_figs).forEach(function(key) {
+//             var ageQuizResponse = graphs_json.age_quiz_response_figs[key];
+//             var div = document.createElement('div');
+//             div.id = key + "-age";
+//             div.className = 'graph-container';
+//             document.getElementById('age-quiz-responses-container').appendChild(div);
+//             Plotly.newPlot(div.id, ageQuizResponse.data, ageQuizResponse.layout);
+// });
     </script>
 </body>
 </html>
