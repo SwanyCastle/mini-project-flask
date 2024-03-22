@@ -57,13 +57,25 @@
         Plotly.newPlot('gender-distribution', graphs_json.gender_distribution.data, graphs_json.gender_distribution.layout);
 
         // 각 질문의 응답 데이터에 대한 그래프 동적 생성 및 렌더링
-        Object.keys(graphs_json.quiz_responses).forEach(function(key) {
-            var quizResponse = graphs_json.quiz_responses[key];
+        Object.keys(graphs_json.question_answer_responses).forEach(function(key) {
+            var quizResponse = graphs_json.question_answer_responses[key];
             var div = document.createElement('div');
             div.id = key;
             div.className = 'graph-container';
             document.getElementById('quiz-responses-container').appendChild(div);
             Plotly.newPlot(key, quizResponse.data, quizResponse.layout);
+        });
+        
+        // 나이대별 응답 데이터에 대한 그래프 동적 생성 및 렌더링
+        Object.keys(graphs_json.age_question_answer_responses).forEach(function(key) {
+            console.log(key)
+            console.log(graphs_json.age_question_answer_responses)
+            var ageQuizResponse = graphs_json.age_question_answer_responses[key];
+            var div = document.createElement('div');
+            div.id = key + "-age";
+            div.className = 'graph-container';
+            document.getElementById('age-quiz-responses-container').appendChild(div);
+            Plotly.newPlot(div.id, ageQuizResponse.data, ageQuizResponse.layout);
         });
     </script>
 </body>

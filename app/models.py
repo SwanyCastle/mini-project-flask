@@ -16,6 +16,7 @@ class Question(db.Model):
     __tablename__ = "questions"
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(255))
+    order_num = db.Column(db.Integer)
     is_active = db.Column(db.Boolean, default=True)
 
 
