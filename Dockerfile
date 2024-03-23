@@ -1,5 +1,5 @@
 # 기본 이미지로 Python 3.11을 선택합니다.
-FROM python:3.11
+FROM python:3.12
 
 # 환경 변수 설정으로 Python이 stdout에 출력하도록 합니다.
 ENV PYTHONUNBUFFERED=1
@@ -20,6 +20,8 @@ RUN poetry config virtualenvs.create false \
 
 # 애플리케이션 복사
 COPY . .
+
+RUN rm -rf /app/migrations
 
 # Flask 애플리케이션 실행을 위한 환경 변수 설정
 ENV FLASK_APP=app:create_app
