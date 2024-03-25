@@ -45,7 +45,7 @@ def question():
 
 @main.route("/questions", methods=["GET"])
 def get_questions():
-    questions = Question.query.order_by(Question.order_num).all()
+    questions = Question.query.filter_by(is_active=True).order_by(Question.order_num)
     question_list = [
         {
             "id": question.id,

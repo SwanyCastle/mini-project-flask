@@ -21,8 +21,6 @@ RUN poetry config virtualenvs.create false \
 # 애플리케이션 복사
 COPY . .
 
-RUN rm -rf /app/migrations
-
 # Flask 애플리케이션 실행을 위한 환경 변수 설정
 ENV FLASK_APP=app:create_app
 ENV FLASK_RUN_HOST=0.0.0.0
